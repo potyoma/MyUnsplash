@@ -235,5 +235,6 @@ _Pvt_Extensions
 appsettings.json
 *.db
 Uploads
-
+.vscode
+Migrations
 

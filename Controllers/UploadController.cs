@@ -6,6 +6,7 @@ using Unsplash.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using Unsplash.Utilities;
+using System;
 
 namespace Unsplash.Controllers
 {
@@ -20,7 +21,7 @@ namespace Unsplash.Controllers
             IWebHostEnvironment env)
         {
             _imgService = imgService;
-            _path = Path.Combine(env.WebRootPath, "Uploads");
+            _path = Path.Combine(env.ContentRootPath, "Uploads");
 
             // If directory doesn't exist, create one.
             if (!Directory.Exists(_path))
@@ -30,27 +31,29 @@ namespace Unsplash.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upload([FromForm] IFormFile image)
+        public async Task<IActionResult> Upload(
+            [FromForm] UploadImgViewModel image)
         {
             if (image is null)
             {
                 return BadRequest("No file attached");
             }
 
-            var serverName = $"{Encryptor.EncryptName(image.FileName, "Banana7!")}.{image.ContentType}";
-            var path = Path.Combine(_path, serverName);
+            var path = Path.Combine(_path, $"{image.Name}.{image.Image.FileName.Split('.')[1]}");
 
             using (var fs = new FileStream(path, FileMode.Create))
             {
-                await image.CopyToAsync(fs);
+                await image.Image.CopyToAsync(fs);
             }
 
-            // Creating new DB record.
-            var img =  new Models.File
-            {
+            // Updating file info record.
+            var img = new Models.File
+            {   
                 Name = image.Name,
-                ServerName = serverName,
-                Path = path
+                Description = image.Description,
+                Path = path,
+                Uploaded = DateTime.Now,
+                Label = image.Label
             };
 
             var success = await _imgService.AddImageAsync(img);

@@ -29,7 +29,7 @@ namespace Unsplash.Services
                 return false;
             }
 
-            return false;
+            return true;
         }
 
         public Task<IEnumerable<File>> GetAllImagesAsync()
