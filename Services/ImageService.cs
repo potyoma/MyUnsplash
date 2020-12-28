@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Unsplash.Data;
 using Unsplash.Models;
 
@@ -32,9 +34,14 @@ namespace Unsplash.Services
             return true;
         }
 
-        public Task<IEnumerable<File>> GetAllImagesAsync()
+        public async Task<IEnumerable<File>> GetAllImagesAsync()
         {
-            throw new System.NotImplementedException();
+            // A collection of all images sorted by uploaded date and time in descending order.
+            var images = await _db.Files
+                .OrderByDescending(f => f.Uploaded)
+                .ToListAsync();
+            
+            return images;
         }
 
         public Task<File> GetImageByIdAsync(int id)

@@ -8,7 +8,6 @@ namespace Unsplash.Data
         public ImageDbContext(DbContextOptions<ImageDbContext> options)
             : base(options)
         {
-            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
