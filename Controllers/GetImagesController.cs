@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Unsplash.Models;
 using Unsplash.Services;
+using Unsplash.Utilities;
 
 namespace Unsplash.Controllers
 {
@@ -41,18 +43,30 @@ namespace Unsplash.Controllers
             }
 
             var image = await _imgService.GetImageByIdAsync((int)id);
-            
+
             if (!System.IO.File.Exists(image.Path))
             {
                 return NotFound();
             }
 
-            var stream = System.IO.File.OpenRead(image.Path);
+            string temp = Compressor.CreateTemp(image);
 
-            return new FileStreamResult(stream, "img/png")
+            var ms = new MemoryStream();
+
+            using (var fs = System.IO.File.OpenRead(temp))
             {
-                FileDownloadName = $"{image.Name}.png"
+                await fs.CopyToAsync(ms);
+            }
+
+            ms.Position = 0;
+
+            System.IO.File.Delete(temp);
+
+            return new FileStreamResult(ms, image.MimeType)
+            {
+                FileDownloadName = $"{image.Name}.{image.Extension}"
             };
+
         }
     }
 }

@@ -50,6 +50,8 @@ namespace Unsplash.Controllers
             var img = new Models.File
             {   
                 Name = image.Name,
+                Extension = image.Extension,
+                MimeType = image.MimeType,
                 Description = image.Description,
                 Path = path,
                 Uploaded = DateTime.Now,

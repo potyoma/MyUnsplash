@@ -1,5 +1,8 @@
+using System;
 using System.IO;
+using System.Linq;
 using ImageMagick;
+using Microsoft.Extensions.FileProviders;
 
 namespace Unsplash.Utilities
 {
@@ -16,9 +19,22 @@ namespace Unsplash.Utilities
         }
 
         // Creates temporary resized image and returns path to it.
-        public static string CreateTemp(string path)
+        public static string CreateTemp(Models.File image)
         {
-            return null;
+            if (!File.Exists(image.Path))
+            {
+                throw new Exception("File doesn't exist.");
+            }
+
+            string tempPath = Path.Combine("Uploads", "Temp", $"{image.Name}.{image.Extension}");
+
+            using (var img = new MagickImage(image.Path))
+            {
+                img.Resize(200, 0);
+                img.Write(tempPath);
+            }
+
+            return tempPath;
         }
     }
 }
