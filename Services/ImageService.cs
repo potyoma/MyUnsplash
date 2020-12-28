@@ -44,9 +44,12 @@ namespace Unsplash.Services
             return images;
         }
 
-        public Task<File> GetImageByIdAsync(int id)
+        public async Task<File> GetImageByIdAsync(int id)
         {
-            throw new System.NotImplementedException();
+            var result = await _db.Files
+                .FirstOrDefaultAsync(f => f.Id == id);
+
+            return result;
         }
 
         public Task<File> GetImageByNameAsync(string name)

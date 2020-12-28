@@ -8,7 +8,7 @@ using Unsplash.Services;
 namespace Unsplash.Controllers
 {
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("api/[controller]/")]
     public class GetImagesController : ControllerBase
     {
         private readonly IImageService _imgService;
@@ -33,7 +33,7 @@ namespace Unsplash.Controllers
             return result;
         }
 
-        [HttpGet("id?={id}")]
+        [HttpGet("id={id}/")]
         public async Task<IActionResult> GetImageById(int? id)
         {
             if (id is null)
@@ -41,7 +41,19 @@ namespace Unsplash.Controllers
                 return BadRequest();
             }
 
+            var image = await _imgService.GetImageByIdAsync((int)id);
             
+            if (!System.IO.File.Exists(image.Path))
+            {
+                return NotFound();
+            }
+
+            var stream = System.IO.File.OpenRead(image.Path);
+
+            return new FileStreamResult(stream, "img/png")
+            {
+                FileDownloadName = $"{image.Name}.png"
+            };
         }
     }
 }
