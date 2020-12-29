@@ -21,9 +21,14 @@ namespace Unsplash.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<DownloadImgInfoViewModel>> GetAllByDate()
+        public async Task<ActionResult<List<DownloadImgInfoViewModel>>> GetAllByDate()
         {
             var images = await _imgService.GetAllImagesAsync();
+
+            if (images is null)
+            {
+                return NotFound();
+            }
 
             return images.Select(image => new DownloadImgInfoViewModel(image)).ToList();
         }
@@ -49,7 +54,6 @@ namespace Unsplash.Controllers
             }
 
             string temp = Compressor.CreateTemp(image);
-
             var ms = new MemoryStream();
 
             await using(var fs = System.IO.File.OpenRead(temp))
@@ -58,14 +62,30 @@ namespace Unsplash.Controllers
             }
 
             ms.Position = 0;
-
             System.IO.File.Delete(temp);
 
             return new FileStreamResult(ms, image.MimeType)
             {
                 FileDownloadName = $"{image.Name}.{image.Extension}"
             };
+        }
+        
+        [HttpGet("label={label}")]
+        public async Task<ActionResult<List<DownloadImgInfoViewModel>>> GetImagesByLabel(string label)
+        {
+            if (string.IsNullOrEmpty(label))
+            {
+                return BadRequest();
+            }
+            
+            var images = await _imgService.GetImagesByLabelAsync(label);
 
+            if (images is null)
+            {
+                return NotFound();
+            }
+
+            return images.Select(image => new DownloadImgInfoViewModel(image)).ToList();
         }
     }
 }

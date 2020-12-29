@@ -27,7 +27,7 @@ namespace Unsplash.Services
             await _db.AddAsync(image);
             var added = await _db.SaveChangesAsync();
 
-            return added > 0;
+            return added == 1;
         }
 
         public async Task<IEnumerable<File>> GetAllImagesAsync()
@@ -48,9 +48,12 @@ namespace Unsplash.Services
             return result;
         }
 
-        public Task<File> GetImageByNameAsync(string name)
+        public async Task<File> GetImageByNameAsync(string name)
         {
-            throw new System.NotImplementedException();
+            var image = await _db.Files
+                .FirstOrDefaultAsync(f => f.Name == name);
+
+            return image;
         }
 
         public async Task<File> RemoveImageAsync(int id)
@@ -66,7 +69,7 @@ namespace Unsplash.Services
             _db.Files.Remove(image);
             var success = await _db.SaveChangesAsync();
 
-            if (success < 0)
+            if (success != 0)
             {
                 throw new Exception("Error saving changes in db.");
             }
@@ -74,9 +77,31 @@ namespace Unsplash.Services
             return image;
         }
 
-        public Task<bool> UpdateImageAsync(File image)
+        public async Task<bool> UpdateImageAsync(int originalId, File updatedImage)
         {
-            throw new System.NotImplementedException();
+            var image = await _db.Files
+                .FirstOrDefaultAsync(f => f.Id == originalId);
+
+            if (image.Id != originalId)
+            {
+                return false;
+            }
+
+            updatedImage.Id = image.Id;
+            _db.Update(updatedImage);
+            int success = await _db.SaveChangesAsync();
+
+            return success == 1;
+        }   
+
+        public async Task<IEnumerable<File>> GetImagesByLabelAsync(string label)
+        {
+            var images = await _db.Files
+                .Where(f => f.Label == label)
+                .OrderByDescending(f => f.Uploaded)
+                .ToListAsync();
+
+            return images;
         }
     }
 }

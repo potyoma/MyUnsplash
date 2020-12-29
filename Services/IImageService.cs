@@ -10,7 +10,8 @@ namespace Unsplash.Services
         Task<File> GetImageByIdAsync(int id);
         Task<File> GetImageByNameAsync(string name);
         Task<IEnumerable<File>> GetAllImagesAsync();
-        Task<bool> UpdateImageAsync(File image);
+        Task<bool> UpdateImageAsync(int originalId, File image);
         Task<File> RemoveImageAsync(int id);
+        Task<IEnumerable<File>> GetImagesByLabelAsync(string label);
     }
 }
