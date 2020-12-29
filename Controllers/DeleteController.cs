@@ -19,6 +19,11 @@ namespace Unsplash.Controllers
         [HttpDelete("id={id}")]
         public async Task<IActionResult> Delete(int? id)
         {
+            if (id is null)
+            {
+                return BadRequest();
+            }
+            
             try 
             {
                 var deleted = await _imgService.RemoveImageAsync((int)id);

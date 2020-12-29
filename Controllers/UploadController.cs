@@ -46,7 +46,7 @@ namespace Unsplash.Controllers
 
             var path = Path.Combine(_path, $"{image.Name}.{image.Image.FileName.Split('.')[1]}");
 
-            using (var fs = new FileStream(path, FileMode.Create))
+            await using (var fs = new FileStream(path, FileMode.Create))
             {
                 await image.Image.CopyToAsync(fs);
             }

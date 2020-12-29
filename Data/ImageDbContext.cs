@@ -6,10 +6,7 @@ namespace Unsplash.Data
     public class ImageDbContext : DbContext
     {
         public ImageDbContext(DbContextOptions<ImageDbContext> options)
-            : base(options)
-        {
-            Database.EnsureCreated();
-        }
+            : base(options) { }
 
         public DbSet<File> Files { get; set; }
 

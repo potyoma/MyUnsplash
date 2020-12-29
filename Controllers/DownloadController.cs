@@ -27,7 +27,7 @@ namespace Unsplash.Controllers
 
             if (image is null)
             {
-                return NotFound("Sorry, file soesn't exist.");
+                return NotFound("Sorry, file doesn't exist.");
             }
 
             if (!System.IO.File.Exists(image.Path))

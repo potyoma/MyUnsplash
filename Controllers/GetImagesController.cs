@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Unsplash.Models;
@@ -24,14 +25,7 @@ namespace Unsplash.Controllers
         {
             var images = await _imgService.GetAllImagesAsync();
 
-            var result = new List<DownloadImgInfoViewModel>();
-
-            foreach (var image in images)
-            {
-                result.Add(new DownloadImgInfoViewModel(image));
-            }
-
-            return result;
+            return images.Select(image => new DownloadImgInfoViewModel(image)).ToList();
         }
 
         [HttpGet("id={id}/")]
@@ -58,7 +52,7 @@ namespace Unsplash.Controllers
 
             var ms = new MemoryStream();
 
-            using (var fs = System.IO.File.OpenRead(temp))
+            await using(var fs = System.IO.File.OpenRead(temp))
             {
                 await fs.CopyToAsync(ms);
             }
