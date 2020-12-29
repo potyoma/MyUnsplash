@@ -44,6 +44,11 @@ namespace Unsplash.Controllers
 
             var image = await _imgService.GetImageByIdAsync((int)id);
 
+            if (image is null)
+            {
+                return NotFound("Sorry, file doesn't exist.");
+            }
+
             if (!System.IO.File.Exists(image.Path))
             {
                 return NotFound();

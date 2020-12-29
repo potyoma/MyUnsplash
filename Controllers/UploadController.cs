@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Unsplash.Services;
 using Unsplash.Models;
@@ -37,6 +36,11 @@ namespace Unsplash.Controllers
             if (image is null)
             {
                 return BadRequest("No file attached");
+            }
+
+            if (image.Extension == "bmp")
+            {
+                return BadRequest("The type is not supported.");
             }
 
             var path = Path.Combine(_path, $"{image.Name}.{image.Image.FileName.Split('.')[1]}");
