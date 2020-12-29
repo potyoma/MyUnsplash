@@ -1,27 +1,27 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Unsplash.Services;
-using Unsplash.Models;
-using Microsoft.AspNetCore.Hosting;
+﻿using System;
 using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Unsplash.Models;
+using Unsplash.Services;
 using Unsplash.Utilities;
-using System;
 
 namespace Unsplash.Controllers
 {
     [ApiController]
-    [Route("/api/[controller]")]
-    public class UploadController : ControllerBase
+    [Route("api/[controller]")]
+    public class UpdateController : ControllerBase
     {
         private readonly IImageService _imgService;
         private readonly string _path;
 
-        public UploadController(IImageService imgService,
+        public UpdateController(IImageService imageService,
             IWebHostEnvironment env)
         {
-            _imgService = imgService;
+            _imgService = imageService;
             _path = Path.Combine(env.ContentRootPath, "Uploads");
-
+            
             // If directory doesn't exist, create one.
             if (!Directory.Exists(_path))
             {
@@ -29,32 +29,33 @@ namespace Unsplash.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Upload(
+        [HttpPut("id={id}")]
+        public async Task<IActionResult> UpdateImage(int id,
             [FromForm] UploadImgViewModel image)
         {
-            if (image is null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("No file attached");
+                return BadRequest("All fields should be provided.");
             }
 
-            // TODO: Add file type check!
             if (image.Extension == "bmp")
             {
-                return BadRequest("The type is not supported.");
+                return BadRequest("The type is not supported. Sorry.");
             }
 
-            string path = Path.Combine(_path, 
+            await DeleteExistingAsync(id);
+
+            string path = Path.Combine(_path,
                 $"{image.Name}.{image.Extension}");
 
             await using (var fs = new FileStream(path, FileMode.Create))
             {
                 await image.Image.CopyToAsync(fs);
             }
-
-            // Updating file info record.
+            
+            // Updating record in db.
             var img = new Models.File
-            {   
+            {
                 Name = image.Name,
                 Extension = image.Extension,
                 MimeType = image.MimeType,
@@ -64,16 +65,31 @@ namespace Unsplash.Controllers
                 Label = image.Label
             };
 
-            var success = await _imgService.AddImageAsync(img);
+            bool success = await _imgService.UpdateImageAsync(id, img);
 
             if (!success)
             {
                 return BadRequest("Something went wrong.");
             }
-
-            Compressor.Compress(path);
             
+            Compressor.Compress(path);
+
             return Ok("File uploaded.");
+        }
+
+        private async Task DeleteExistingAsync(int id)
+        {
+            var image = await _imgService.GetImageByIdAsync(id);
+
+            if (image is null)
+            {
+                return;
+            }
+
+            if (System.IO.File.Exists(image.Path))
+            {
+                System.IO.File.Delete(image.Path);
+            }
         }
     }
 }
