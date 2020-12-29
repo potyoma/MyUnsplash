@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,12 +27,7 @@ namespace Unsplash.Services
             await _db.AddAsync(image);
             var added = await _db.SaveChangesAsync();
 
-            if (added < 0)
-            {
-                return false;
-            }
-
-            return true;
+            return added > 0;
         }
 
         public async Task<IEnumerable<File>> GetAllImagesAsync()
@@ -57,9 +53,25 @@ namespace Unsplash.Services
             throw new System.NotImplementedException();
         }
 
-        public Task<bool> RemoveImageAsync(File image)
+        public async Task<File> RemoveImageAsync(int id)
         {
-            throw new System.NotImplementedException();
+            var image = await _db.Files
+                .FirstOrDefaultAsync(f => f.Id == id);
+            
+            if (image is null)
+            {
+                throw new Exception("Image is not found.");
+            }
+
+            _db.Files.Remove(image);
+            var success = await _db.SaveChangesAsync();
+
+            if (success < 0)
+            {
+                throw new Exception("Error saving changes in db.");
+            }
+
+            return image;
         }
 
         public Task<bool> UpdateImageAsync(File image)

@@ -38,6 +38,7 @@ namespace Unsplash.Controllers
                 return BadRequest("No file attached");
             }
 
+            // TODO: Add file type check!
             if (image.Extension == "bmp")
             {
                 return BadRequest("The type is not supported.");
