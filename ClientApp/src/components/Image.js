@@ -1,12 +1,10 @@
 ﻿import React, { Component } from 'react';
 
-export class Image extends Component {
-    static image = props.link;
-    
+export default class Image extends Component {    
     render() {
         return (
             <div className="container">
-                <img src={this.image} />
+                <img src={ this.props.link } />
             </div>
         )
     }

@@ -9,6 +9,8 @@ namespace Unsplash.Models
         public string Description { get; set; }
         public string Label { get; set; }
         public DateTime? Uploaded { get; set; }
+        public string LinkPreviewDownload { get; set; }
+        public string LinkFullDownload { get; set; }
 
         public DownloadImgInfoViewModel() { }
 
