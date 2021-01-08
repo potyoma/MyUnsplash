@@ -238,4 +238,5 @@ Uploads
 .vscode
 Migrations
 .idea
+*.zip
 
