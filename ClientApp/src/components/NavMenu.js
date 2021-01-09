@@ -31,7 +31,7 @@ export class NavMenu extends Component {
             <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
               <ul className="navbar-nav flex-grow">
                 <NavItem>
-                  <button className="btn btn-success">Add Photo</button>
+                  <button className="btn btn-success" onClick={() => this.props.togglePop()}>Add Photo</button>
                 </NavItem>
               </ul>
             </Collapse>

@@ -5,14 +5,18 @@ export class Home extends Component {
   static displayName = Home.name;
   static apiLink = document.URL + "/api";
 
+  constructor(props) {
+    super(props);
+
+    fetch(this.apiLink + "/getimages")
+      .then(r => this.setState({ images: r.json() }));
+  }
+
   state = {
     images: []
   }
 
   render () {
-    fetch(this.apiLink + "/getimages")
-      .then(r => this.setState({ images: r.json() }));
-
     return (
       <div>
         { 

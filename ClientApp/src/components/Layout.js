@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Container } from 'reactstrap';
 import { NavMenu } from './NavMenu';
 
+import UploadPopup from './UploadPopup';
+
 export class Layout extends Component {
   static displayName = Layout.name;
 
@@ -13,15 +15,17 @@ export class Layout extends Component {
     this.setState({
       seen: !this.state.seen
     });
+
+    console.log("togglePop was pressed");
   };
 
   render () {
     return (
       <div>
-        <NavMenu />
+        <NavMenu togglePop={this.togglePop}/>
+        {this.state.seen ? <UploadPopup toggle={this.togglePop} /> : null}
         <Container>
           {this.props.children}
-          {this.state.seen ? <UploadPopup toggle={this.togglePop} /> : null}
         </Container>
       </div>
     );
