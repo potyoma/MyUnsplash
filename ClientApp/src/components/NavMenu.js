@@ -24,14 +24,14 @@ export class NavMenu extends Component {
   render () {
     return (
       <header>
-        <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
+        <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white box-shadow mb-3" light>
           <Container>
             <NavbarBrand tag={Link} to="/"><img src="./favicon.svg"/></NavbarBrand>
             <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
             <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
               <ul className="navbar-nav flex-grow">
                 <NavItem>
-                  <button className="btn btn-info">Add Photo</button>
+                  <button className="btn btn-success">Add Photo</button>
                 </NavItem>
               </ul>
             </Collapse>

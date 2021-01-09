@@ -15,7 +15,11 @@ export class Home extends Component {
 
     return (
       <div>
-        { this.state.images.forEach(i => <Image link={i.link} />) }
+        { 
+          this.state.images.length > 0 
+          ? this.state.images.forEach(i => <Image link={i.link} />) 
+          : <h3>Sorry, no images available...</h3>
+        }
       </div>
     );
   }
